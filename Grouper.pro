@@ -18,7 +18,8 @@ HEADERS += \
     ItemDelegate.h \
     Student.h \
     clog.h \
-    mainwindow.h
+    mainwindow.h \
+    typedef.h
 
 FORMS += \
     mainwindow.ui

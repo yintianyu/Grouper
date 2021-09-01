@@ -98,23 +98,38 @@ void MainWindow::prepareData(){
 
 void MainWindow::on_groupButton_clicked()
 {
-    int groupNumber = candidates.size() / groupMateAmount;
-    if(groupNumber <= 0 or groupNumber > 15){
-        int atLeast = candidates.size() / 15;
-        int atMost = candidates.size() / 1;
-        QString warn = QString("Unsupported person per group: %1. Please set it to %2~%3.").arg(groupMateAmount).arg(atLeast).arg(atMost);
-        QMessageBox::warning(this, "Warning", warn);
-        return;
+    int groupNumber = 0;
+    int personPerGroup = 0;
+    if(ns == SEL_PERSON_PER_GROUP){
+        personPerGroup = numberInput;
+        groupNumber = candidates.size() / personPerGroup;
+        if(groupNumber <= 0 or groupNumber > 15){
+            int atLeast = candidates.size() / 15;
+            int atMost = candidates.size() / 1;
+            QString warn = QString("Unsupported person per group: %1. Please set it to %2~%3.").arg(personPerGroup).arg(atLeast).arg(atMost);
+            QMessageBox::warning(this, "Warning", warn);
+            return;
+        }
     }
+    else if (ns == SEL_GROUP_NUMBER){
+        groupNumber = numberInput;
+        personPerGroup = candidates.size() / groupNumber;
+        if(groupNumber <= 0 or groupNumber > 15){
+            QString warn = QString("Unsupported Group Number: %1. Please set it to 1~15.").arg(personPerGroup);
+            QMessageBox::warning(this, "Warning", warn);
+            return;
+        }
+    }
+
     std::mt19937 g(rd());
     std::shuffle(candidates.begin(), candidates.end(), g);
     int groupNow = 1;
-    int fraction = candidates.size() - groupMateAmount * groupNumber;
+    int fraction = candidates.size() - personPerGroup * groupNumber;
     int groupAssigned = 0;
     for(auto iter = candidates.begin();iter < candidates.end();++iter){
         iter->groupBelongsTo = groupNow;
         groupAssigned += 1;
-        if((groupAssigned == groupMateAmount and groupNow < (groupNumber - fraction)) or (groupAssigned == groupMateAmount + 1)){
+        if((groupAssigned == personPerGroup and groupNow < (groupNumber - fraction)) or (groupAssigned == personPerGroup + 1)){
             groupNow += 1;
             groupAssigned = 0;
         }
@@ -127,11 +142,24 @@ void MainWindow::on_groupButton_clicked()
 
 void MainWindow::on_groupNumberBox_valueChanged(int arg1)
 {
-    groupMateAmount = arg1;
+    numberInput = arg1;
     CLOG_INFO("groupNumber changed to %d", arg1);
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event){
     putCandinateToItem();
+}
+
+
+
+void MainWindow::on_selGroupNumber_clicked()
+{
+    ns = SEL_GROUP_NUMBER;
+}
+
+
+void MainWindow::on_selPPG_clicked()
+{
+    ns = SEL_PERSON_PER_GROUP;
 }
 

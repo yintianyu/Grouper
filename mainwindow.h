@@ -8,6 +8,7 @@
 #include <random>
 #include "Student.h"
 #include "ItemDelegate.h"
+#include "typedef.h"
 
 #define DESKTOP_WIDTH 1920/2
 #define DESKTOP_HEIGHT 1080/2
@@ -29,6 +30,11 @@ private slots:
     void on_groupButton_clicked();
 
     void on_groupNumberBox_valueChanged(int arg1);
+
+    void on_selGroupNumber_clicked();
+
+    void on_selPPG_clicked();
+
 private:
     Ui::MainWindow *ui;
     QString fileName{};
@@ -39,8 +45,9 @@ private:
     QSharedPointer<QSortFilterProxyModel> m_proxyModel;
 
     QSharedPointer<QStandardItemModel> m_model;
-    int groupMateAmount{1};
+    int numberInput{1};
     std::random_device rd;
+    NumberSelection ns{SEL_GROUP_NUMBER};
 
 private:
     void readCsv();
